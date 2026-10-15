@@ -1,0 +1,45 @@
+services:
+  local-postgres:
+    image: postgres:18
+    container_name: local-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: welcome2
+    volumes:
+      - pgdata:/var/lib/postgresql
+      #- ./init.sql:/docker-entrypoint-initdb.d/init.sql # Seeds sample schema & records automatically
+    networks:
+      - app-network
+
+  my-pgadmin:
+    image: dpage/pgadmin4
+    container_name: my-pgadmin
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: welcome2
+    networks:
+      - app-network
+
+# --- Custom Python Application Service ---
+  # Wire your pre-existing Python container into the stack
+  my-python-app:
+    image: my-python-app:latest # Uses your pre-existing image
+    container_name: my-python-app
+    volumes:
+      - .:/app # Mounts the export_app folder to the container's app path
+    working_dir: /app
+    networks:
+      - app-network
+    depends_on:
+      - local-postgres
+    command: tail -f /dev/null # Keeps the container awake so you can execute scripts inside it
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
