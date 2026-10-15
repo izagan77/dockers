@@ -13,7 +13,14 @@ def export_postgres_to_csv():
         "port": "5432",
     }
 
-    output_filename = "exported_data.csv"
+    # --- OLD CODE ---
+    # output_filename = "exported_data.csv"
+
+    # --- NEW FIXED CODE ---
+    # This finds the exact folder where export.py lives and forces the CSV to save there
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_filename = os.path.join(script_dir, "exported_data.csv")
+    
     query = "SELECT product_name FROM development.products;"
 
     try:

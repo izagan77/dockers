@@ -2,17 +2,19 @@ services:
 # --- Custom Python Application Service ---
   # Wire your pre-existing Python container into the stack
   my-python-app:
-    image: my-python-app:latest # Uses your pre-existing image
-    container_name: my-python-app
+    image: python:3.11-slim
+    container_name: export-app3-runner
     volumes:
-      - .:/app # Mounts the export_app folder to the container's app path
+      - .:/app
     working_dir: /app
-    #command: tail -f /dev/null # Keeps the container awake so you can execute scripts inside
-    command: sh -c "pip install --no-cache-dir -r requirements.txt && tail -f /dev/null" it
     networks:
-      - central-db-network  # Joins the same external network lane
-      # Inside your python connection code, set host='local-postgres'
-    # CRUCIAL CHANGE: Installs packages first, then runs your long-lived idle process
+      - central-db-network
+    external_links:
+      - local-postgres:local-postgres
+    #command: python export.py
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python export.py"
+    # CRUCIAL ADDITION: The tail command keeps the container awake indefinitely
+    #command: sh -c "pip install --no-cache-dir -r requirements.txt && python export.py && tail -f /dev/null"
 
 networks:
   central-db-network:
