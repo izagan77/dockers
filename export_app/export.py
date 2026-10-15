@@ -9,7 +9,7 @@ def export_postgres_to_csv():
         "host": "local-postgres",  # 'localhost' since port 5432 is mapped directly to Windows host environment
         "database": "postgres",
         "user": "postgres",
-        "password": "welcome2",
+        "password": "welcome1",
         "port": "5432",
     }
 
